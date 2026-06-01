@@ -15,7 +15,7 @@ a = Analysis(
     ],
     hookspath=[],
     runtime_hooks=[],
-    excludes=['tkinter', 'unittest', 'email', 'html', 'http', 'xml'],
+    excludes=['tkinter', 'unittest'],
     noarchive=False,
 )
 
