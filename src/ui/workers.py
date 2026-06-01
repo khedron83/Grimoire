@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Optional
 
 from PySide6.QtCore import QThread, Signal
 
@@ -128,11 +129,13 @@ class BackupWorker(QThread):
     finished = Signal(str)    # path to created zip
     error = Signal(str)
 
-    def __init__(self, addons_dir: Path, backup_dir: Path, label: str = ""):
+    def __init__(self, addons_dir: Path, backup_dir: Path,
+                 label: str = "", saved_vars_dir: Optional[Path] = None):
         super().__init__()
         self.addons_dir = addons_dir
         self.backup_dir = backup_dir
         self.label = label
+        self.saved_vars_dir = saved_vars_dir
 
     def run(self):
         try:
@@ -140,6 +143,7 @@ class BackupWorker(QThread):
                 self.addons_dir,
                 self.backup_dir,
                 self.label,
+                saved_vars_dir=self.saved_vars_dir,
                 progress_cb=lambda name: self.progress.emit(f"Backing up {name}"),
             )
             self.finished.emit(str(zip_path))
@@ -152,16 +156,18 @@ class RestoreWorker(QThread):
     finished = Signal()
     error = Signal(str)
 
-    def __init__(self, zip_path: Path, addons_dir: Path):
+    def __init__(self, zip_path: Path, addons_dir: Path, saved_vars_dir: Optional[Path] = None):
         super().__init__()
         self.zip_path = zip_path
         self.addons_dir = addons_dir
+        self.saved_vars_dir = saved_vars_dir
 
     def run(self):
         try:
             restore_backup(
                 self.zip_path,
                 self.addons_dir,
+                saved_vars_dir=self.saved_vars_dir,
                 progress_cb=lambda name: self.progress.emit(f"Restoring {name}"),
             )
             self.finished.emit()

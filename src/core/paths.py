@@ -60,5 +60,19 @@ def detect_addons_dir() -> Optional[Path]:
     return None
 
 
+def detect_saved_vars_dir(addons_dir: Optional[Path] = None) -> Optional[Path]:
+    """Return the SavedVariables folder — always the sibling of the AddOns folder."""
+    if addons_dir:
+        candidate = addons_dir.parent / "SavedVariables"
+        if candidate.exists():
+            return candidate
+        return candidate  # return even if it doesn't exist yet; ESO creates it on first run
+
+    detected = detect_addons_dir()
+    if detected:
+        return detected.parent / "SavedVariables"
+    return None
+
+
 def ensure_addons_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)

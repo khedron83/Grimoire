@@ -203,6 +203,11 @@ class BrowseTab(QWidget):
 
     # ── Public API ────────────────────────────────────────────────
 
+    def load_addon_list(self):
+        """Start fetching the full addon list in the background (called on startup)."""
+        if not self._all_addons and not (self._worker and self._worker.isRunning()):
+            self._load_list()
+
     def set_installed(self, installed: dict[str, Addon]):
         self._installed = installed
         self._refresh_install_status()

@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from typing import Callable, Optional
 
-from .addon import Addon, addon_from_disk
+from .addon import Addon, addon_from_disk, write_sidecar
 from .esoui import RemoteAddonInfo, fetch_addon_details, download_zip
 
 
@@ -57,12 +57,14 @@ def install_addon(
     for folder_name in folders:
         folder = addons_dir / folder_name
         if folder.is_dir():
+            write_sidecar(folder, info.addon_id, info.date)
             addon = addon_from_disk(folder)
             if addon:
                 addon.addon_id = info.addon_id
                 addon.esoui_url = info.info_url
                 addon.download_url = download_url
                 addon.remote_version = info.version
+                addon.install_date = info.date
                 addons.append(addon)
 
     return addons

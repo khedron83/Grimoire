@@ -79,10 +79,9 @@ class MainWindow(QMainWindow):
                 self._open_settings()
                 return
 
-        if self.config.auto_update_on_launch:
-            self._installed_tab.refresh()
-
         self._installed_tab.refresh()
+        # Fetch remote addon list in background so update info is ready immediately
+        self._browse_tab.load_addon_list()
 
     def _on_addon_list_loaded(self, all_addons: list):
         # Build folder-name → RemoteAddonInfo so the installed tab can show update status

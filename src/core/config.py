@@ -23,6 +23,8 @@ def _config_path() -> Path:
 _DEFAULTS: dict[str, Any] = {
     "addons_dir": "",
     "backup_dir": "",
+    "saved_vars_dir": "",
+    "backup_include_saved_vars": False,
     "auto_update_on_launch": False,
     "theme": "dark",
     "browse_sort_column": 5,   # COL_UPDATED
@@ -77,6 +79,22 @@ class Config:
     @auto_update_on_launch.setter
     def auto_update_on_launch(self, v: bool) -> None:
         self._data["auto_update_on_launch"] = v
+
+    @property
+    def saved_vars_dir(self) -> str:
+        return self._data.get("saved_vars_dir", "")
+
+    @saved_vars_dir.setter
+    def saved_vars_dir(self, v: str) -> None:
+        self._data["saved_vars_dir"] = v
+
+    @property
+    def backup_include_saved_vars(self) -> bool:
+        return bool(self._data.get("backup_include_saved_vars", False))
+
+    @backup_include_saved_vars.setter
+    def backup_include_saved_vars(self, v: bool) -> None:
+        self._data["backup_include_saved_vars"] = v
 
     @property
     def browse_sort_column(self) -> int:
