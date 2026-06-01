@@ -98,7 +98,7 @@ def addon_from_disk(folder: Path) -> Optional[Addon]:
     return Addon(
         name=folder.name,
         title=_clean(meta.get("Title", folder.name)) or folder.name,
-        version=meta.get("Version", ""),
+        version=meta.get("Version") or meta.get("AddOnVersion", ""),
         author=_clean(meta.get("Author", "")),
         description=meta.get("Description", ""),
         depends_on=unique_deps,
