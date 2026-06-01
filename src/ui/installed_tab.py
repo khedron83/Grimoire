@@ -133,7 +133,7 @@ class InstalledTab(QWidget):
             title_item = QTableWidgetItem(addon.title or addon.name)
             title_item.setData(Qt.UserRole, addon.name)
             self._table.setItem(row, 0, title_item)
-            self._table.setItem(row, 1, QTableWidgetItem(addon.version))
+            self._table.setItem(row, 1, QTableWidgetItem(addon.version or "—"))
             self._table.setItem(row, 2, QTableWidgetItem(remote.version if remote else "—"))
             self._table.setItem(row, 3, QTableWidgetItem(addon.author))
 
