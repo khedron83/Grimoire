@@ -13,6 +13,7 @@ from ..core.config import Config
 from ..core.paths import detect_addons_dir
 from .browse_tab import BrowseTab
 from .installed_tab import InstalledTab
+from .backup_tab import BackupTab
 from .settings_dialog import SettingsDialog
 
 
@@ -46,9 +47,12 @@ class MainWindow(QMainWindow):
         self._tabs = QTabWidget()
         self._browse_tab = BrowseTab(self.config)
         self._installed_tab = InstalledTab(self.config)
+        self._backup_tab = BackupTab(self.config)
         self._tabs.addTab(self._installed_tab, "Installed")
         self._tabs.addTab(self._browse_tab, "Browse")
+        self._tabs.addTab(self._backup_tab, "Backup")
         self.setCentralWidget(self._tabs)
+        self._tabs.currentChanged.connect(self._on_tab_changed)
 
         # Status bar
         self._status = QStatusBar()
@@ -59,6 +63,7 @@ class MainWindow(QMainWindow):
         self._browse_tab.addon_list_loaded.connect(self._on_addon_list_loaded)
         self._browse_tab.status_message.connect(self._status.showMessage)
         self._installed_tab.status_message.connect(self._status.showMessage)
+        self._backup_tab.status_message.connect(self._status.showMessage)
         self._installed_tab.addon_removed.connect(
             lambda name: self._browse_tab.set_installed(
                 self._installed_tab.get_installed_map()
@@ -82,6 +87,10 @@ class MainWindow(QMainWindow):
         self._installed_tab.refresh()
         # Fetch remote addon list in background so update info is ready immediately
         self._browse_tab.load_addon_list()
+
+    def _on_tab_changed(self, index: int):
+        if self._tabs.widget(index) is self._backup_tab:
+            self._backup_tab.refresh()
 
     def _on_addon_list_loaded(self, all_addons: list):
         # Build folder-name → RemoteAddonInfo so the installed tab can show update status

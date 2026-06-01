@@ -1,4 +1,4 @@
-"""Installed addons tab — list, remove, update, backup/restore."""
+"""Installed addons tab — list, remove, update."""
 
 from __future__ import annotations
 
@@ -10,18 +10,17 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem,
     QPushButton, QLabel, QHeaderView, QAbstractItemView, QMessageBox,
-    QFileDialog, QGroupBox, QProgressBar,
+    QProgressBar,
 )
 
 from ..core.addon import Addon
 from ..core.esoui import RemoteAddonInfo
-from .workers import ScanWorker, UpdateWorker, BackupWorker, RestoreWorker
+from .workers import ScanWorker, UpdateWorker
 
-_UPDATE_COLOR = QColor(200, 140, 0)   # amber — visible on both light and dark themes
+_UPDATE_COLOR = QColor(200, 140, 0)
 
 
 class _SortItem(QTableWidgetItem):
-    """QTableWidgetItem with an explicit numeric sort key."""
     def __init__(self, text: str, key: int):
         super().__init__(text)
         self._key = key
@@ -33,21 +32,18 @@ class _SortItem(QTableWidgetItem):
 
 
 def _semver(s: str) -> tuple[int, ...] | None:
-    """Parse a version string like '2.0 r43' or '1.7.7' into a comparable int tuple."""
     parts = re.split(r'[\s.\-_]+', s.strip())
     nums = []
     for p in parts:
-        p = re.sub(r'^[a-zA-Z]+', '', p)   # strip leading letters: r43 → 43
+        p = re.sub(r'^[a-zA-Z]+', '', p)
         if p.isdigit():
             nums.append(int(p))
     return tuple(nums) if nums else None
 
 
 def _has_update(addon: Addon, remote: RemoteAddonInfo) -> bool:
-    # Reliable: compare upload timestamps when we recorded them on install
     if addon.install_date and remote.date:
         return remote.date > addon.install_date
-    # Fallback: parse versions and check remote is strictly newer
     if addon.version and remote.version:
         av = _semver(addon.version)
         rv = _semver(remote.version)
@@ -104,22 +100,9 @@ class InstalledTab(QWidget):
         layout.addWidget(self._progress_label)
         layout.addWidget(self._progress)
 
-        backup_group = QGroupBox("Backup & Restore")
-        backup_layout = QHBoxLayout(backup_group)
-        self._btn_backup = QPushButton("Create Backup")
-        self._btn_restore = QPushButton("Restore Backup…")
-        self._backup_label = QLabel("")
-        backup_layout.addWidget(self._btn_backup)
-        backup_layout.addWidget(self._btn_restore)
-        backup_layout.addWidget(self._backup_label)
-        backup_layout.addStretch()
-        layout.addWidget(backup_group)
-
         self._btn_refresh.clicked.connect(self.refresh)
         self._btn_update_all.clicked.connect(self._update_all)
         self._btn_remove.clicked.connect(self._remove_selected)
-        self._btn_backup.clicked.connect(self._create_backup)
-        self._btn_restore.clicked.connect(self._restore_backup)
         self._table.itemSelectionChanged.connect(self._on_selection_changed)
 
     # ── Public API ────────────────────────────────────────────────
@@ -154,7 +137,6 @@ class InstalledTab(QWidget):
             self._table.setItem(row, 2, QTableWidgetItem(remote.version if remote else "—"))
             self._table.setItem(row, 3, QTableWidgetItem(addon.author))
 
-            # Sort key: 0 = update, 1 = up to date, 2 = unknown — so updates sort first
             if has_upd:
                 status_item = _SortItem("Update available", 0)
             elif remote:
@@ -170,7 +152,6 @@ class InstalledTab(QWidget):
                         item.setForeground(_UPDATE_COLOR)
 
         self._table.setSortingEnabled(True)
-        # Default: updates first
         self._table.sortItems(4, Qt.AscendingOrder)
 
     # ── Refresh ───────────────────────────────────────────────────
@@ -208,10 +189,10 @@ class InstalledTab(QWidget):
                 addons_to_remove.append(addon)
         if not addons_to_remove:
             return
-        names = [a.title or a.name for a in addons_to_remove]
         if QMessageBox.question(
             self, "Remove Addons",
-            f"Remove {len(addons_to_remove)} addon(s)?\n" + "\n".join(names),
+            f"Remove {len(addons_to_remove)} addon(s)?\n"
+            + "\n".join(a.title or a.name for a in addons_to_remove),
         ) != QMessageBox.Yes:
             return
         from ..core.installer import remove_addon
@@ -251,61 +232,3 @@ class InstalledTab(QWidget):
         worker.error.connect(lambda e: self.status_message.emit(f"Update error: {e}"))
         worker.start()
         self._worker = worker
-
-    # ── Backup / Restore ─────────────────────────────────────────
-
-    def _create_backup(self):
-        backup_dir = self.config.backup_dir or str(Path.home() / "eso-addon-backups")
-        addons_dir = self.config.addons_dir
-        if not addons_dir:
-            self.status_message.emit("AddOns directory not set.")
-            return
-        sv_dir = None
-        if self.config.backup_include_saved_vars and self.config.saved_vars_dir:
-            sv_dir = Path(self.config.saved_vars_dir)
-        self._progress.setVisible(True)
-        self._progress.setRange(0, 0)
-        worker = BackupWorker(Path(addons_dir), Path(backup_dir), saved_vars_dir=sv_dir)
-        worker.progress.connect(self._progress_label.setText)
-        worker.finished.connect(self._on_backup_done)
-        worker.error.connect(lambda e: self.status_message.emit(f"Backup error: {e}"))
-        worker.start()
-        self._worker = worker
-
-    def _on_backup_done(self, zip_path: str):
-        self._progress.setVisible(False)
-        self._backup_label.setText(f"Last backup: {Path(zip_path).name}")
-        self.status_message.emit(f"Backup saved to {zip_path}")
-
-    def _restore_backup(self):
-        backup_dir = self.config.backup_dir or str(Path.home() / "eso-addon-backups")
-        zip_path, _ = QFileDialog.getOpenFileName(
-            self, "Select Backup", backup_dir, "Zip files (*.zip)"
-        )
-        if not zip_path:
-            return
-        addons_dir = self.config.addons_dir
-        if not addons_dir:
-            self.status_message.emit("AddOns directory not set.")
-            return
-        if QMessageBox.question(
-            self, "Restore Backup",
-            f"Restore from {Path(zip_path).name}?\nExisting addons will be overwritten.",
-        ) != QMessageBox.Yes:
-            return
-        self._progress.setVisible(True)
-        self._progress.setRange(0, 0)
-        sv_dir = None
-        if self.config.saved_vars_dir:
-            sv_dir = Path(self.config.saved_vars_dir)
-        worker = RestoreWorker(Path(zip_path), Path(addons_dir), saved_vars_dir=sv_dir)
-        worker.progress.connect(self._progress_label.setText)
-        worker.finished.connect(self._on_restore_done)
-        worker.error.connect(lambda e: self.status_message.emit(f"Restore error: {e}"))
-        worker.start()
-        self._worker = worker
-
-    def _on_restore_done(self):
-        self._progress.setVisible(False)
-        self.status_message.emit("Restore complete.")
-        self.refresh()
