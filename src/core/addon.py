@@ -31,8 +31,14 @@ class Addon:
 
 
 _MANIFEST_RE = re.compile(r"^##\s*(\w+)\s*:\s*(.+)$", re.MULTILINE)
-# ESO color/texture codes: |cRRGGBB ... |r   and   |tN:N:path|t
-_ESO_CODE_RE = re.compile(r'\|[cC][0-9a-fA-F]+|\|r|\|t[^|]*(?:\|t)?')
+# ESO color codes: |cRRGGBB (6 hex digits standard, or fewer if malformed)
+# Use negative lookahead so we never consume name chars that follow a short code.
+_ESO_CODE_RE = re.compile(
+    r'\|[cC][0-9a-fA-F]{6}'          # standard 6-digit color
+    r'|\|[cC][0-9a-fA-F]{1,5}(?![0-9a-fA-F])'  # malformed short color (not followed by hex)
+    r'|\|r'                            # color reset
+    r'|\|t[^|]*(?:\|t)?'              # texture: |tN:N:path|t
+)
 
 
 def parse_manifest(path: Path) -> dict[str, str]:
