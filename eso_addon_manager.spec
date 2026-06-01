@@ -26,7 +26,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='ESO Addon Manager',
+    name='eso-addon-manager',
     debug=False,
     strip=False,
     upx=True,
@@ -41,5 +41,5 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='ESO Addon Manager',
+    name='eso-addon-manager',
 )
