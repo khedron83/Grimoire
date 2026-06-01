@@ -83,6 +83,7 @@ class _DateItem(QTableWidgetItem):
 class BrowseTab(QWidget):
     addon_installed = Signal(list)
     status_message = Signal(str)
+    addon_list_loaded = Signal(list)   # emitted with full list[RemoteAddonInfo]
 
     def __init__(self, config, parent=None):
         super().__init__(parent)
@@ -242,6 +243,8 @@ class BrowseTab(QWidget):
         order = (Qt.AscendingOrder if self.config.browse_sort_order == "asc"
                  else Qt.DescendingOrder)
         self._table.horizontalHeader().setSortIndicator(col, order)
+
+        self.addon_list_loaded.emit(addons)
 
         self._apply_filter()
 

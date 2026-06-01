@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
 
         # Cross-tab signals
         self._browse_tab.addon_installed.connect(self._on_addons_installed)
+        self._browse_tab.addon_list_loaded.connect(self._on_addon_list_loaded)
         self._browse_tab.status_message.connect(self._status.showMessage)
         self._installed_tab.status_message.connect(self._status.showMessage)
         self._installed_tab.addon_removed.connect(
@@ -82,6 +83,14 @@ class MainWindow(QMainWindow):
             self._installed_tab.refresh()
 
         self._installed_tab.refresh()
+
+    def _on_addon_list_loaded(self, all_addons: list):
+        # Build folder-name → RemoteAddonInfo so the installed tab can show update status
+        remote_map = {}
+        for info in all_addons:
+            for dir_name in info.dirs:
+                remote_map[dir_name] = info
+        self._installed_tab.set_remote_info(remote_map)
 
     def _on_addons_installed(self, addons):
         self._installed_tab.refresh()
