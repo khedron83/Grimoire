@@ -10,9 +10,6 @@ build/
 # PyInstaller
 *.spec.bak
 
-# Config & runtime data
-~/.config/eso-addon-manager/
-
 # IDE
 .idea/
 .vscode/
