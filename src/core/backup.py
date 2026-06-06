@@ -23,7 +23,7 @@ def create_backup(
     backup_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     suffix = f"_{label}" if label else ""
-    zip_path = backup_dir / f"eso_addons_{timestamp}{suffix}.zip"
+    zip_path = backup_dir / f"grimoire_{timestamp}{suffix}.zip"
 
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         for file in sorted(addons_dir.rglob("*")):
@@ -87,7 +87,7 @@ def list_backups(backup_dir: Path) -> list[Path]:
     if not backup_dir.exists():
         return []
     return sorted(
-        backup_dir.glob("eso_addons_*.zip"),
+        backup_dir.glob("grimoire_*.zip"),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )

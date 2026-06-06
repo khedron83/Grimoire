@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -13,7 +14,7 @@ def _config_dir() -> Path:
         base = Path(os.environ.get("APPDATA", Path.home()))
     else:
         base = Path.home() / ".config"
-    return base / "eso-addon-manager"
+    return base / "grimoire"
 
 
 def _config_path() -> Path:
@@ -113,4 +114,3 @@ class Config:
         self._data["browse_sort_order"] = v
 
 
-import os  # noqa: E402 — placed after class to avoid circular ref in _config_dir

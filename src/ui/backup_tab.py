@@ -103,7 +103,7 @@ class BackupTab(QWidget):
     # ── Internals ─────────────────────────────────────────────────
 
     def _backup_dir(self) -> Path | None:
-        d = self.config.backup_dir or str(Path.home() / "eso-addon-backups")
+        d = self.config.backup_dir or str(Path.home() / "grimoire-backups")
         return Path(d) if d else None
 
     def _on_selection_changed(self):

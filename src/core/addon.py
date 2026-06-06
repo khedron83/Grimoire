@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 
 
-_SIDECAR = ".eso-addon-manager.json"
+_SIDECAR = ".grimoire.json"
 
 
 @dataclass

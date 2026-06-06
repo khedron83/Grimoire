@@ -41,7 +41,7 @@ jobs:
             libxcb-shape0 libxcb-xinerama0 libxcb-xfixes0
 
       - name: Build with PyInstaller
-        run: pyinstaller eso_addon_manager.spec
+        run: pyinstaller grimoire.spec
 
       - name: Zip artifact (Linux)
         if: runner.os == 'Linux'
