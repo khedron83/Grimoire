@@ -77,6 +77,15 @@ class RemoteAddonInfo:
     thumbs: list[str]
 
 
+def _to_list(value) -> list[str]:
+    """Normalise UIDir/UIIMG_Thumbs — API returns str, list, or null."""
+    if isinstance(value, list):
+        return [v for v in value if v]
+    if isinstance(value, str) and value:
+        return [value]
+    return []
+
+
 def _strip_bbcode(text: str) -> str:
     """Remove BBCode tags from description text."""
     text = re.sub(r'\[/?[A-Za-z][^\]]*\]', '', text)
@@ -102,9 +111,9 @@ def _parse_filelist_entry(raw: dict, cats: dict[int, str]) -> RemoteAddonInfo:
         info_url=raw.get("UIFileInfoURL", ""),
         download_url="",
         filename="",
-        dirs=raw.get("UIDir") or [],
+        dirs=_to_list(raw.get("UIDir")),
         md5="",
-        thumbs=raw.get("UIIMG_Thumbs") or [],
+        thumbs=_to_list(raw.get("UIIMG_Thumbs")),
     )
 
 
