@@ -1,11 +1,14 @@
 """Entry point."""
 
 import sys
+from pathlib import Path
 from PySide6.QtWidgets import QApplication
-from PySide6.QtGui import QPalette, QColor
+from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtCore import Qt
 
 from .ui.main_window import MainWindow
+
+_ICON = Path(__file__).parent / "resources" / "icon.svg"
 
 
 def _apply_dark_palette(app: QApplication) -> None:
@@ -34,8 +37,10 @@ def _apply_dark_palette(app: QApplication) -> None:
 
 def main() -> None:
     app = QApplication(sys.argv)
-    app.setApplicationName("ESO Addon Manager")
-    app.setOrganizationName("eso-addon-manager")
+    app.setApplicationName("Grimoire")
+    app.setOrganizationName("grimoire")
+    if _ICON.exists():
+        app.setWindowIcon(QIcon(str(_ICON)))
     _apply_dark_palette(app)
     window = MainWindow()
     window.show()

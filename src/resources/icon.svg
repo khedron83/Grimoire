@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Dark background -->
+  <rect width="128" height="128" rx="20" fill="#1a1a2e"/>
+
+  <!-- Book spine -->
+  <rect x="56" y="18" width="10" height="92" rx="3" fill="#8b6914"/>
+
+  <!-- Left page (open book) -->
+  <path d="M56 20 C40 22 20 28 16 36 L16 100 C20 92 40 88 56 90 Z" fill="#f5e6c8"/>
+  <!-- Left page lines -->
+  <line x1="24" y1="44" x2="52" y2="40" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="24" y1="52" x2="52" y2="49" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="24" y1="60" x2="52" y2="58" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="24" y1="68" x2="52" y2="67" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="24" y1="76" x2="52" y2="76" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+
+  <!-- Right page (open book) -->
+  <path d="M66 20 C82 22 102 28 106 36 L106 100 C102 92 82 88 66 90 Z" fill="#f5e6c8"/>
+  <!-- Right page lines -->
+  <line x1="104" y1="44" x2="70" y2="40" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="104" y1="52" x2="70" y2="49" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="104" y1="60" x2="70" y2="58" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="104" y1="68" x2="70" y2="67" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+  <line x1="104" y1="76" x2="70" y2="76" stroke="#c4a86b" stroke-width="2" opacity="0.7"/>
+
+  <!-- Glowing rune on right page -->
+  <text x="88" y="62" text-anchor="middle" font-size="22" fill="#7b2fff" opacity="0.9" font-family="serif">✦</text>
+  <text x="88" y="62" text-anchor="middle" font-size="22" fill="#a855f7" opacity="0.6" font-family="serif">✦</text>
+
+  <!-- Book clasp -->
+  <rect x="58" y="60" width="6" height="10" rx="2" fill="#c4a86b"/>
+  <circle cx="61" cy="65" r="2" fill="#8b6914"/>
+</svg>

@@ -1,6 +1,6 @@
-# ESO Addon Manager
+# Grimoire
 
-A desktop addon manager for **The Elder Scrolls Online**, built with Python and PySide6. Browse, install, update, and back up your addons directly from [ESOUI.com](https://www.esoui.com) — no browser required.
+An addon manager for **The Elder Scrolls Online**, built with Python and PySide6. Browse, install, update, and back up your addons directly from [ESOUI.com](https://www.esoui.com) — no browser required.
 
 Works on **Windows**, **Linux**, and **Steam Deck**.
 
@@ -28,8 +28,8 @@ Works on **Windows**, **Linux**, and **Steam Deck**.
 ## Install & run
 
 ```bash
-git clone https://github.com/khedron83/ESO-Addon-Manager.git
-cd ESO-Addon-Manager
+git clone https://github.com/khedron83/Grimoire.git
+cd Grimoire
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -38,7 +38,7 @@ python run.py
 
 ### First run
 
-The app will attempt to auto-detect your AddOns directory. If it can't find it, the Settings dialog opens automatically. Set the path to:
+Grimoire will attempt to auto-detect your AddOns directory. If it can't find it, the Settings dialog opens automatically. Set the path to:
 
 | Platform | Default path |
 |---|---|
@@ -65,7 +65,7 @@ Lists every addon currently in your AddOns directory. Addons with available upda
 
 Fetches the full addon list from ESOUI on launch (runs in the background).
 
-- **Search** — filter by name in real time
+- **Search** — filter by name, author, or category in real time
 - **Category** — filter by addon category (e.g. Unit Frames, Maps, Combat)
 - **Sort** — click any column header (Title, Version, Author, Downloads, Updated)
 - **Detail panel** — select any addon to see its description, changelog, and install status

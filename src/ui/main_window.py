@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.config = Config()
-        self.setWindowTitle("ESO Addon Manager")
+        self.setWindowTitle("Grimoire")
         self.setMinimumSize(900, 600)
         self._setup_ui()
         self._first_run_check()
@@ -112,8 +112,8 @@ class MainWindow(QMainWindow):
     def _show_about(self):
         QMessageBox.about(
             self,
-            "About ESO Addon Manager",
-            "<b>ESO Addon Manager</b> v1.0<br><br>"
+            "About Grimoire",
+            "<b>Grimoire</b> v1.0<br><br>"
             "Browse, install, and update Elder Scrolls Online addons<br>"
             "from ESOUI.com with automatic dependency resolution.<br><br>"
             "Supports Windows, Linux, and Steam Deck.<br><br>"
