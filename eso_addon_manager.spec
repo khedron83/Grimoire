@@ -1,15 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
-import sys
+from pathlib import Path
 
 a = Analysis(
     ['run.py'],
     pathex=['.'],
     binaries=[],
-    datas=[],
+    datas=[
+        ('src/resources/icon.svg', 'src/resources'),
+    ],
     hiddenimports=[
         'PySide6.QtCore',
         'PySide6.QtGui',
         'PySide6.QtWidgets',
+        'PySide6.QtSvg',
         'lxml.etree',
         'lxml._elementpath',
     ],
@@ -26,11 +29,11 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='eso-addon-manager',
+    name='grimoire',
     debug=False,
     strip=False,
     upx=True,
-    console=False,           # no console window on Windows
+    console=False,
     argv_emulation=False,
 )
 
@@ -41,5 +44,5 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='eso-addon-manager',
+    name='grimoire',
 )

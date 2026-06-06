@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QStatusBar, QMenuBar, QMenu,
     QMessageBox, QLabel,
@@ -110,12 +110,16 @@ class MainWindow(QMainWindow):
             self._installed_tab.refresh()
 
     def _show_about(self):
-        QMessageBox.about(
-            self,
-            "About Grimoire",
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("About Grimoire")
+        dlg.setTextFormat(Qt.TextFormat.RichText)
+        dlg.setText(
             "<b>Grimoire</b> v1.0<br><br>"
-            "Browse, install, and update Elder Scrolls Online addons<br>"
-            "from ESOUI.com with automatic dependency resolution.<br><br>"
-            "Supports Windows, Linux, and Steam Deck.<br><br>"
-            "Licensed under the GNU General Public License v3.0.",
+            "An addon manager for The Elder Scrolls Online.<br>"
+            "Browse, install, and update addons from ESOUI.com<br>"
+            "with automatic dependency resolution.<br><br>"
+            "Works on Windows, Linux, and Steam Deck.<br><br>"
+            "Licensed under the GNU General Public License v3.0."
         )
+        dlg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        dlg.exec()
