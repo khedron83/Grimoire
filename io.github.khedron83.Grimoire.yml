@@ -1,9 +1,9 @@
 app-id: io.github.khedron83.Grimoire
+base: io.qt.PySide.BaseApp
+base-version: '6.9'
 runtime: org.kde.Platform
 runtime-version: '6.9'
 sdk: org.kde.Sdk
-sdk-extensions:
-  - org.freedesktop.Sdk.Extension.python3
 command: grimoire
 separate-locales: false
 
@@ -14,24 +14,21 @@ finish-args:
   - --socket=wayland
   - --filesystem=home
   - --device=dri
-  - --env=PATH=/app/bin:/usr/bin:/usr/lib/sdk/python3/bin
 
 modules:
 
-  # ── Python pip dependencies ─────────────────────────────────────────────────
-  # Generate/update these with:
-  #   flatpak-pip-generator --runtime=org.freedesktop.Sdk//24.08 \
-  #     PySide6 requests beautifulsoup4 lxml
-  # Then include the output file here:
+  # ── Small pip dependencies (PySide6 comes from the BaseApp) ────────────────
+  # Regenerate with:
+  #   .venv/bin/python -m flatpak_pip_generator \
+  #     --runtime org.freedesktop.Sdk//25.08 \
+  #     --prefer-wheels lxml,charset-normalizer \
+  #     requests beautifulsoup4 lxml \
+  #     -o python3-deps.json
   - python3-deps.json
 
   # ── Grimoire ────────────────────────────────────────────────────────────────
   - name: grimoire
     buildsystem: simple
-    build-options:
-      env:
-        PYTHONPATH: /app/lib/python3/site-packages
-        PATH: /usr/lib/sdk/python3/bin:/app/bin:/usr/bin
     build-commands:
       - pip3 install --prefix=/app --no-deps --no-build-isolation .
       - install -Dm644 src/resources/icon.svg
