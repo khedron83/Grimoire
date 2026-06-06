@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Grimoire
+Comment=ESO Addon Manager — browse, install, and update addons from ESOUI.com
+Exec=grimoire
+Icon=io.github.khedron83.Grimoire
+Type=Application
+Categories=Game;Utility;
+Keywords=ESO;Elder Scrolls Online;addon;mod;
+StartupWMClass=Grimoire

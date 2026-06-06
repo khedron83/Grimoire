@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.khedron83.Grimoire</id>
+  <name>Grimoire</name>
+  <summary>ESO Addon Manager</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+
+  <description>
+    <p>
+      Grimoire is an addon manager for The Elder Scrolls Online. Browse, install,
+      and update addons from ESOUI.com with automatic dependency resolution.
+      Works on Windows, Linux, and Steam Deck.
+    </p>
+    <ul>
+      <li>Browse and search the full ESOUI addon catalogue</li>
+      <li>One-click install with automatic dependency handling</li>
+      <li>Update detection for installed addons</li>
+      <li>Backup and restore your AddOns and SavedVariables</li>
+      <li>Auto-detects ESO installed via Steam/Proton</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.khedron83.Grimoire.desktop</launchable>
+
+  <url type="homepage">https://github.com/khedron83/Grimoire</url>
+  <url type="bugtracker">https://github.com/khedron83/Grimoire/issues</url>
+
+  <provides>
+    <binary>grimoire</binary>
+  </provides>
+
+  <releases>
+    <release version="1.0" date="2025-01-01">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1"/>
+</component>
