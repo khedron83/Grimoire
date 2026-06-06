@@ -112,9 +112,10 @@ class MainWindow(QMainWindow):
     def _show_about(self):
         QMessageBox.about(
             self,
-            "ESO Addon Manager",
-            "ESO Addon Manager\n\n"
-            "Installs and updates Elder Scrolls Online addons from ESOUI.com.\n"
-            "Supports auto-dependency resolution and backup/restore.\n\n"
-            "Works on Windows, Linux, and Steam Deck.",
+            "About ESO Addon Manager",
+            "<b>ESO Addon Manager</b> v1.0<br><br>"
+            "Browse, install, and update Elder Scrolls Online addons<br>"
+            "from ESOUI.com with automatic dependency resolution.<br><br>"
+            "Supports Windows, Linux, and Steam Deck.<br><br>"
+            "Licensed under the GNU General Public License v3.0.",
         )

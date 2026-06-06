@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# PyInstaller
+*.spec.bak
+
+# Config & runtime data
+~/.config/eso-addon-manager/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
