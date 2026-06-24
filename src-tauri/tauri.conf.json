@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "identifier": "io.github.khedron83.Grimoire",
   "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173"
   },
