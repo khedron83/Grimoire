@@ -25,8 +25,7 @@ modules:
   - name: grimoire
     buildsystem: simple
     build-commands:
-      # npm --offline ci requires node-sources.json (see below)
-      - npm --offline ci
+      - npm --offline ci --cache ./flatpak-node/npm-cache
       - npm run build
       # cargo --offline requires cargo-sources.json (see below)
       - cargo --offline build --release --manifest-path src-tauri/Cargo.toml
