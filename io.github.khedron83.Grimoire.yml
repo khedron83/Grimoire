@@ -1,9 +1,10 @@
 app-id: io.github.khedron83.Grimoire
-base: io.qt.PySide.BaseApp
-base-version: '6.9'
-runtime: org.kde.Platform
-runtime-version: '6.9'
-sdk: org.kde.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
 command: grimoire
 separate-locales: false
 
@@ -15,22 +16,21 @@ finish-args:
   - --filesystem=home
   - --device=dri
 
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+  env:
+    CARGO_HOME: /run/build/grimoire/cargo
+
 modules:
-
-  # ── Small pip dependencies (PySide6 comes from the BaseApp) ────────────────
-  # Regenerate with:
-  #   .venv/bin/python -m flatpak_pip_generator \
-  #     --runtime org.freedesktop.Sdk//25.08 \
-  #     --prefer-wheels lxml,charset-normalizer \
-  #     requests beautifulsoup4 lxml \
-  #     -o python3-deps.json
-  - python3-deps.json
-
-  # ── Grimoire ────────────────────────────────────────────────────────────────
   - name: grimoire
     buildsystem: simple
     build-commands:
-      - pip3 install --prefix=/app --no-deps --no-build-isolation .
+      # npm --offline ci requires node-sources.json (see below)
+      - npm --offline ci
+      - npm run build
+      # cargo --offline requires cargo-sources.json (see below)
+      - cargo --offline build --release --manifest-path src-tauri/Cargo.toml
+      - install -Dm755 src-tauri/target/release/grimoire /app/bin/grimoire
       - install -Dm644 src/resources/icon.svg
           /app/share/icons/hicolor/scalable/apps/io.github.khedron83.Grimoire.svg
       - install -Dm644 io.github.khedron83.Grimoire.desktop
@@ -40,3 +40,9 @@ modules:
     sources:
       - type: dir
         path: .
+      # ponytail: generate these once Cargo.lock + package-lock.json exist:
+      #   python3 flatpak-cargo-generator.py src-tauri/Cargo.lock -o cargo-sources.json
+      #   python3 flatpak-node-generator.py npm package-lock.json -o node-sources.json
+      # (flatpak-builder-tools from https://github.com/flatpak/flatpak-builder-tools)
+      - cargo-sources.json
+      - node-sources.json

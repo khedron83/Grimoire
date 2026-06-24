@@ -10,6 +10,11 @@ build/
 # PyInstaller
 *.spec.bak
 
+# Tauri
+node_modules/
+src-tauri/target/
+build-dir/
+
 # IDE
 .idea/
 .vscode/
