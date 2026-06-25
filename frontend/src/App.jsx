@@ -17,6 +17,9 @@ export default function App() {
 
   useEffect(() => {
     invoke("cmd_check_update").then(tag => { if (tag) setUpdateTag(tag); }).catch(() => {});
+    // Pre-fetch addon list so InstalledTab update detection works without visiting Browse first
+    if (allAddons.length === 0)
+      invoke("cmd_fetch_all_addons").then(setAllAddons).catch(() => {});
   }, []);
 
   useEffect(() => {

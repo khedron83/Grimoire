@@ -82,14 +82,6 @@ async fn cmd_install_addon(
 
         for a in &batch {
             live_installed.insert(a.name.clone());
-            // Queue missing deps from freshly installed manifests
-            for dep in &a.depends_on {
-                if !live_installed.contains(dep) {
-                    // We don't have the full remote list here; deps will be handled by the
-                    // frontend passing them in. Warn only.
-                    let _ = on_progress.send(format!("Note: dependency '{}' may need manual install", dep));
-                }
-            }
         }
         all_installed.extend(batch);
     }

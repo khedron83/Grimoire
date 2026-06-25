@@ -36,6 +36,7 @@ export default function InstalledTab({ config, allAddons, installedMap, setInsta
   const [sort, setSort] = useState({ key: "_status", dir: "asc" });
   const [selected, setSelected] = useState(new Set());
   const [focusedIdx, setFocusedIdx] = useState(-1);
+  const [filter, setFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState("");
   const [ctxMenu, setCtxMenu] = useState(null); // { x, y, names: Set }
@@ -60,7 +61,11 @@ export default function InstalledTab({ config, allAddons, installedMap, setInsta
   useEffect(() => { if (config.addons_dir) refresh(); }, [config.addons_dir]);
 
   const displayed = React.useMemo(() => {
-    return [...addons].sort((a, b) => {
+    const q = filter.toLowerCase();
+    return [...addons].filter(a => !q ||
+      (a.title || a.name).toLowerCase().includes(q) ||
+      a.author.toLowerCase().includes(q)
+    ).sort((a, b) => {
       const ra = remoteMap[a.name], rb = remoteMap[b.name];
       const sa = hasUpdate(a, ra) ? 0 : ra ? 1 : 2;
       const sb = hasUpdate(b, rb) ? 0 : rb ? 1 : 2;
@@ -218,6 +223,8 @@ export default function InstalledTab({ config, allAddons, installedMap, setInsta
       <div className="toolbar">
         <button onClick={refresh} disabled={busy}>Refresh</button>
         <button onClick={updateAll} disabled={busy || !allAddons.length}>Update All</button>
+        <input type="text" placeholder="Filter…" value={filter}
+          onChange={e => setFilter(e.target.value)} style={{ marginLeft: 4 }} />
         <button className="danger" onClick={removeSelected} disabled={!selected.size || busy}>
           Remove{selected.size > 1 ? ` (${selected.size})` : ""}
         </button>

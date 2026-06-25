@@ -11,6 +11,15 @@ const COLS = [
   { key: "date", label: "Updated", num: true },
 ];
 
+function buildRemoteMap(allAddons) {
+  const m = {};
+  for (const a of allAddons) {
+    for (const dir of a.dirs ?? []) m[dir] = a;
+    m[a.name] = a;
+  }
+  return m;
+}
+
 function fmtDate(ts) {
   if (!ts) return "";
   return new Date(ts).toISOString().slice(0, 10);
@@ -107,18 +116,35 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
     setInstalling(true);
     const ch = new Channel();
     ch.onmessage = msg => setStatus(msg);
-    const installedDirs = Object.keys(installedMap);
+    const rMap = buildRemoteMap(allAddons);
+    const liveInstalled = { ...installedMap };
+    const queue = [detail];
+    const seen = new Set([detail.addon_id]);
+    const allInstalled = [];
     try {
-      const batch = await invoke("cmd_install_addon", {
-        addon: detail,
-        addonsDir: config.addons_dir,
-        installedDirs,
-        onProgress: ch,
-      });
-      const newMap = { ...installedMap };
-      for (const a of batch) newMap[a.name] = a;
-      setInstalledMap(newMap);
-      setStatus(`Installed: ${batch.map(a => a.title || a.name).join(", ")}`);
+      while (queue.length) {
+        const addon = queue.shift();
+        const batch = await invoke("cmd_install_addon", {
+          addon,
+          addonsDir: config.addons_dir,
+          installedDirs: Object.keys(liveInstalled),
+          onProgress: ch,
+        });
+        for (const a of batch) liveInstalled[a.name] = a;
+        allInstalled.push(...batch);
+        // Resolve deps from manifest and queue any that aren't installed yet
+        for (const a of batch) {
+          for (const dep of a.depends_on ?? []) {
+            const remote = rMap[dep];
+            if (remote && !seen.has(remote.addon_id) && !liveInstalled[dep]) {
+              seen.add(remote.addon_id);
+              queue.push(remote);
+            }
+          }
+        }
+      }
+      setInstalledMap({ ...installedMap, ...liveInstalled });
+      setStatus(`Installed: ${allInstalled.map(a => a.title || a.name).join(", ")}`);
     } catch (e) {
       setStatus(`Install error: ${e}`);
     } finally {
