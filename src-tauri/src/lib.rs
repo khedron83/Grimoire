@@ -201,6 +201,11 @@ async fn cmd_pick_folder(app: tauri::AppHandle) -> Option<String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // WebKit2GTK DMA buffer renderer causes white screens / GPU failures on many
+    // Linux systems (AppImage, bare binary). Must be set before WebKit init.
+    #[cfg(target_os = "linux")]
+    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![

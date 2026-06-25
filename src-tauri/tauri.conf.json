@@ -1,6 +1,6 @@
 {
   "productName": "Grimoire",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "io.github.khedron83.Grimoire",
   "build": {
     "beforeBuildCommand": "npm run build",

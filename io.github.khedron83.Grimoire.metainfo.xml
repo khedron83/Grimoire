@@ -33,6 +33,15 @@
   </provides>
 
   <releases>
+    <release version="1.0.1" date="2026-06-25">
+      <description>
+        <p>Fix white screen and "cannot connect to localhost" on Linux.</p>
+        <ul>
+          <li>Set WEBKIT_DISABLE_DMABUF_RENDERER=1 before WebKit init to fix white screen in AppImage on many Linux GPU setups.</li>
+          <li>Add WEBKIT_DISABLE_WEB_PROCESS_SANDBOX=1 to Flatpak finish-args so the tauri:// custom URI scheme handler is reachable from WebKit's sandboxed web process.</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.0" date="2026-06-25">
       <description>
         <p>Initial release.</p>

@@ -15,6 +15,12 @@ finish-args:
   - --socket=wayland
   - --filesystem=home
   - --device=dri
+  # WebKit2GTK needs these in Flatpak sandbox — without them the custom
+  # tauri:// scheme handler can't be reached from the sandboxed WebContent
+  # process, which makes WebKit fall back to trying http://localhost (devUrl).
+  - --env=WEBKIT_DISABLE_WEB_PROCESS_SANDBOX=1
+  # DMA buffer renderer causes GPU failures on Steam Deck inside Flatpak.
+  - --env=WEBKIT_DISABLE_DMABUF_RENDERER=1
 
 build-options:
   append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin

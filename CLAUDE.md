@@ -40,7 +40,6 @@ Tauri embeds frontend assets at compile time — `npm run build` alone doesn't u
 | `backup.rs` | Zips `AddOns/` (and optionally `SavedVariables/`) using `walkdir` crate. Returns `Vec<BackupEntry>` with name/path/size_mb/date. |
 | `config.rs` | JSON config at `~/.config/grimoire/config.json` (Linux) / `%APPDATA%\grimoire\config.json` (Windows). |
 | `paths.rs` | Platform-aware AddOns dir detection; parses Steam's `libraryfolders.vdf` for Proton/Steam Deck. |
-| `dependency.rs` | Unused BFS dep resolver (kept for reference). |
 
 Progress streaming uses `tauri::ipc::Channel<String>` — the frontend creates a `Channel`, passes it as a command arg, and Rust calls `channel.send(msg)`.
 
