@@ -60,7 +60,8 @@ pub async fn install_addon(
 
 fn extract_zip(zip_path: &Path, dest: &Path) -> Result<Vec<String>, String> {
     let file = std::fs::File::open(zip_path).map_err(|e| e.to_string())?;
-    let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
+    let mut archive = zip::ZipArchive::new(file)
+        .map_err(|e| format!("Invalid zip ({}): {}", zip_path.display(), e))?;
     let mut tops = std::collections::HashSet::new();
 
     for i in 0..archive.len() {

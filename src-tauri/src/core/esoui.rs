@@ -186,10 +186,15 @@ pub async fn download_zip(
     use tokio::io::AsyncWriteExt;
     let mut resp = CLIENT
         .get(url)
+        .header("Referer", "https://www.esoui.com/")
         .timeout(std::time::Duration::from_secs(120))
         .send()
         .await
         .map_err(|e| e.to_string())?;
+
+    if !resp.status().is_success() {
+        return Err(format!("Download failed: HTTP {}", resp.status()));
+    }
 
     let total = resp.content_length().unwrap_or(0);
     let mut file = tokio::fs::File::create(dest).await.map_err(|e| e.to_string())?;
@@ -200,5 +205,6 @@ pub async fn download_zip(
         done += chunk.len() as u64;
         on_progress(done, total);
     }
+    file.flush().await.map_err(|e| e.to_string())?;
     Ok(())
 }
