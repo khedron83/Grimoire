@@ -28,7 +28,7 @@ _DEFAULTS: dict[str, Any] = {
     "backup_include_saved_vars": False,
     "auto_update_on_launch": False,
     "theme": "dark",
-    "browse_sort_column": 5,   # COL_UPDATED
+    "browse_sort_column": 4,   # COL_DOWNLOADS
     "browse_sort_order": "desc",
 }
 
@@ -99,7 +99,10 @@ class Config:
 
     @property
     def browse_sort_column(self) -> int:
-        return int(self._data.get("browse_sort_column", 5))
+        try:
+            return int(self._data.get("browse_sort_column", 5))
+        except (ValueError, TypeError):
+            return 5
 
     @browse_sort_column.setter
     def browse_sort_column(self, v: int) -> None:

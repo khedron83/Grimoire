@@ -417,11 +417,16 @@ class BrowseTab(QWidget):
         if not addons_dir:
             self.status_message.emit("AddOns directory not set — check Settings.")
             return
-        # Build folder-name → RemoteAddonInfo for dep resolution
+        # Build folder-name → RemoteAddonInfo for dep resolution.
+        # Two passes: dirs first (low priority), then name (high priority).
+        # This prevents addons that bundle a library in their dirs from
+        # hijacking dep lookups for that library's own ESOUI listing.
         dir_to_addon: dict[str, RemoteAddonInfo] = {}
         for a in self._all_addons:
             for d in a.dirs:
                 dir_to_addon[d] = a
+        for a in self._all_addons:
+            dir_to_addon[a.name] = a
 
         self._btn_install.setEnabled(False)
         self._set_busy(True)

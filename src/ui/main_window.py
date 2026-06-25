@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, QCoreApplication
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QMainWindow, QTabWidget, QStatusBar, QMenuBar, QMenu,
-    QMessageBox, QLabel,
+    QMainWindow, QTabWidget, QStatusBar, QWidget,
+    QHBoxLayout, QLabel, QPushButton, QMessageBox,
 )
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QDesktopServices
+from PySide6.QtCore import QUrl
 
 from ..core.config import Config
 from ..core.paths import detect_addons_dir
@@ -15,6 +16,7 @@ from .browse_tab import BrowseTab
 from .installed_tab import InstalledTab
 from .backup_tab import BackupTab
 from .settings_dialog import SettingsDialog
+from .workers import UpdateCheckWorker
 
 
 class MainWindow(QMainWindow):
@@ -23,8 +25,10 @@ class MainWindow(QMainWindow):
         self.config = Config()
         self.setWindowTitle("Grimoire")
         self.setMinimumSize(900, 600)
+        self._update_worker = None
         self._setup_ui()
         self._first_run_check()
+        self._check_for_update()
 
     def _setup_ui(self):
         # Menu bar
@@ -43,7 +47,35 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self._show_about)
         help_menu.addAction(about_action)
 
-        # Tabs
+        # Update banner (hidden until an update is found)
+        self._update_banner = QWidget()
+        self._update_banner.setStyleSheet(
+            "background:#6a4fc8; color:white; padding:4px 8px;"
+        )
+        banner_layout = QHBoxLayout(self._update_banner)
+        banner_layout.setContentsMargins(8, 4, 8, 4)
+        self._update_label = QLabel()
+        self._update_label.setOpenExternalLinks(False)
+        dl_btn = QPushButton("Download")
+        dl_btn.setFixedWidth(90)
+        dl_btn.clicked.connect(self._open_releases)
+        dismiss_btn = QPushButton("✕")
+        dismiss_btn.setFixedWidth(28)
+        dismiss_btn.clicked.connect(self._update_banner.hide)
+        banner_layout.addWidget(self._update_label)
+        banner_layout.addStretch()
+        banner_layout.addWidget(dl_btn)
+        banner_layout.addWidget(dismiss_btn)
+        self._update_banner.hide()
+
+        # Central widget: banner + tabs stacked vertically
+        central = QWidget()
+        from PySide6.QtWidgets import QVBoxLayout
+        vbox = QVBoxLayout(central)
+        vbox.setContentsMargins(0, 0, 0, 0)
+        vbox.setSpacing(0)
+        vbox.addWidget(self._update_banner)
+
         self._tabs = QTabWidget()
         self._browse_tab = BrowseTab(self.config)
         self._installed_tab = InstalledTab(self.config)
@@ -51,7 +83,8 @@ class MainWindow(QMainWindow):
         self._tabs.addTab(self._installed_tab, "Installed")
         self._tabs.addTab(self._browse_tab, "Browse")
         self._tabs.addTab(self._backup_tab, "Backup")
-        self.setCentralWidget(self._tabs)
+        vbox.addWidget(self._tabs)
+        self.setCentralWidget(central)
         self._tabs.currentChanged.connect(self._on_tab_changed)
 
         # Status bar
@@ -93,12 +126,30 @@ class MainWindow(QMainWindow):
             self._backup_tab.refresh()
 
     def _on_addon_list_loaded(self, all_addons: list):
-        # Build folder-name → RemoteAddonInfo so the installed tab can show update status
+        # Two-pass map: dirs first (low priority), then name (high priority).
+        # Prevents addons that bundle a library in their dirs list from
+        # hijacking dep lookups for that library's own ESOUI listing.
         remote_map = {}
         for info in all_addons:
             for dir_name in info.dirs:
                 remote_map[dir_name] = info
+        for info in all_addons:
+            remote_map[info.name] = info
         self._installed_tab.set_remote_info(remote_map)
+
+    def _check_for_update(self):
+        self._update_worker = UpdateCheckWorker()
+        self._update_worker.update_available.connect(self._show_update_banner)
+        self._update_worker.start()
+
+    def _show_update_banner(self, tag: str):
+        self._update_label.setText(f"Update available: {tag}")
+        self._update_banner.show()
+
+    def _open_releases(self):
+        QDesktopServices.openUrl(
+            QUrl("https://github.com/khedron83/Grimoire/releases/latest")
+        )
 
     def _on_addons_installed(self, addons):
         self._installed_tab.refresh()

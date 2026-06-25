@@ -10,6 +10,14 @@ build/
 # PyInstaller
 *.spec.bak
 
+# Flatpak build artifacts
+build-dir/
+.flatpak-builder/
+
+# Node / Tauri (archived in grimoire-tauri/)
+node_modules/
+src-tauri/
+
 # IDE
 .idea/
 .vscode/

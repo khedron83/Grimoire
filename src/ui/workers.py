@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import requests as _requests
 from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import QThread, Signal
+
+APP_VERSION = "1.0.0"
 
 from ..core.addon import Addon, scan_addons_dir
 from ..core.esoui import RemoteAddonInfo
@@ -173,3 +176,27 @@ class RestoreWorker(QThread):
             self.finished.emit()
         except Exception as e:
             self.error.emit(str(e))
+
+
+def _semver_gt(a: str, b: str) -> bool:
+    def parse(s):
+        return [int(x) for x in s.split(".")[:3] if x.isdigit()]
+    return parse(a) > parse(b)
+
+
+class UpdateCheckWorker(QThread):
+    update_available = Signal(str)  # latest tag e.g. "v1.1.0"
+
+    def run(self):
+        try:
+            resp = _requests.get(
+                "https://api.github.com/repos/khedron83/Grimoire/releases/latest",
+                headers={"User-Agent": "Grimoire"},
+                timeout=10,
+            )
+            tag = resp.json().get("tag_name", "")
+            latest = tag.lstrip("v")
+            if latest and _semver_gt(latest, APP_VERSION):
+                self.update_available.emit(tag)
+        except Exception:
+            pass
