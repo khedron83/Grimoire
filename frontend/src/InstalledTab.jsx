@@ -16,10 +16,8 @@ function stripVersion(name) {
 }
 
 function hasUpdate(addon, remote) {
-  if (!remote) return false;
-  if (addon.install_date && remote.date) return remote.date > addon.install_date;
-  if (addon.version && remote.version) return remote.version !== addon.version;
-  return false;
+  if (!remote || !remote.date || !addon.install_date) return false;
+  return remote.date > addon.install_date;
 }
 
 function buildRemoteMap(allAddons) {

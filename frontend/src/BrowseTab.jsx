@@ -153,7 +153,7 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
   }
 
   const inst = detail ? installStatus(detail) : null;
-  const hasUpdate = inst && inst.version && detail?.version && inst.version !== detail.version;
+  const hasUpdate = inst && detail?.date && inst.install_date && detail.date > inst.install_date;
 
   return (
     <div className="split">
@@ -195,7 +195,7 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
             <tbody>
               {displayed.map(addon => {
                 const inst2 = installStatus(addon);
-                const upd = inst2 && inst2.version && addon.version && inst2.version !== addon.version;
+                const upd = inst2 && addon.date && inst2.install_date && addon.date > inst2.install_date;
                 return (
                   <tr key={addon.addon_id}
                     className={selected === addon.addon_id ? "selected" : ""}
@@ -236,7 +236,7 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
             <button className="primary" disabled={installing || (!hasUpdate && !!inst)}
               onClick={install}>
               {installing ? "Installing…"
-                : hasUpdate ? `Update (${inst.version} → ${detail.version})`
+                : hasUpdate ? `Update to ${detail.version}`
                 : inst ? "Installed"
                 : "Install"}
             </button>
