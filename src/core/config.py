@@ -100,9 +100,9 @@ class Config:
     @property
     def browse_sort_column(self) -> int:
         try:
-            return int(self._data.get("browse_sort_column", 5))
+            return int(self._data.get("browse_sort_column", 4))
         except (ValueError, TypeError):
-            return 5
+            return 4
 
     @browse_sort_column.setter
     def browse_sort_column(self, v: int) -> None:

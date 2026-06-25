@@ -8,7 +8,7 @@ from typing import Optional
 
 from PySide6.QtCore import QThread, Signal
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.2"
 
 from ..core.addon import Addon, scan_addons_dir
 from ..core.esoui import RemoteAddonInfo

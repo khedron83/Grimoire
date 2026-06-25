@@ -243,15 +243,16 @@ class BrowseTab(QWidget):
             self._cat_combo.addItem(cat, cat)
         self._cat_combo.blockSignals(False)
 
-        # Apply saved default sort before populating
+        self.addon_list_loaded.emit(addons)
+
+        self._apply_filter()
+
+        # Apply sort after the table is populated — setting the indicator on an
+        # empty table doesn't trigger a re-sort when rows are later added.
         col = self.config.browse_sort_column
         order = (Qt.AscendingOrder if self.config.browse_sort_order == "asc"
                  else Qt.DescendingOrder)
         self._table.horizontalHeader().setSortIndicator(col, order)
-
-        self.addon_list_loaded.emit(addons)
-
-        self._apply_filter()
 
     # ── Filtering ─────────────────────────────────────────────────
 
