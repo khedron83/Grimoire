@@ -30,8 +30,8 @@ modules:
       # cargo --offline requires cargo-sources.json (see below)
       - cargo --offline build --release --manifest-path src-tauri/Cargo.toml
       - install -Dm755 src-tauri/target/release/grimoire /app/bin/grimoire
-      - install -Dm644 src/resources/icon.svg
-          /app/share/icons/hicolor/scalable/apps/io.github.khedron83.Grimoire.svg
+      - install -Dm644 src-tauri/icons/icon.png
+          /app/share/icons/hicolor/512x512/apps/io.github.khedron83.Grimoire.png
       - install -Dm644 io.github.khedron83.Grimoire.desktop
           /app/share/applications/io.github.khedron83.Grimoire.desktop
       - install -Dm644 io.github.khedron83.Grimoire.metainfo.xml
