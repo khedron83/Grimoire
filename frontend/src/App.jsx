@@ -17,9 +17,6 @@ export default function App() {
 
   useEffect(() => {
     invoke("cmd_check_update").then(tag => { if (tag) setUpdateTag(tag); }).catch(() => {});
-    // Pre-fetch addon list so InstalledTab update detection works without visiting Browse first
-    if (allAddons.length === 0)
-      invoke("cmd_fetch_all_addons").then(setAllAddons).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -69,19 +66,19 @@ export default function App() {
       </div>
 
       <div className="tab-content">
-        {tab === "installed" && (
+        <div style={{ display: tab === "installed" ? "contents" : "none" }}>
           <InstalledTab config={config} allAddons={allAddons}
             installedMap={installedMap} setInstalledMap={setInstalledMap}
             setStatus={setStatus} />
-        )}
-        {tab === "browse" && (
+        </div>
+        <div style={{ display: tab === "browse" ? "contents" : "none" }}>
           <BrowseTab config={config} allAddons={allAddons} setAllAddons={setAllAddons}
             installedMap={installedMap} setInstalledMap={setInstalledMap}
             setStatus={setStatus} />
-        )}
-        {tab === "backup" && (
+        </div>
+        <div style={{ display: tab === "backup" ? "contents" : "none" }}>
           <BackupTab config={config} setStatus={setStatus} />
-        )}
+        </div>
       </div>
 
       <div className="status-bar">{status || " "}</div>
