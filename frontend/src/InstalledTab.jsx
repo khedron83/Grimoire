@@ -16,8 +16,12 @@ function stripVersion(name) {
 }
 
 function hasUpdate(addon, remote) {
-  if (!remote || !remote.date || !addon.install_date) return false;
-  return remote.date > addon.install_date;
+  if (!remote) return false;
+  // Compare ESOUI-to-ESOUI version (stored at install time) — no manifest format mismatch
+  if (addon.grimoire_version) return remote.version !== addon.grimoire_version;
+  // Fallback: date comparison when we have a sidecar but no version stored
+  if (addon.install_date && remote.date) return remote.date > addon.install_date;
+  return false;
 }
 
 function buildRemoteMap(allAddons) {

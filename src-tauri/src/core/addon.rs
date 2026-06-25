@@ -15,12 +15,14 @@ pub struct InstalledAddon {
     pub depends_on: Vec<String>,
     pub folder_path: String,
     pub install_date: i64,
+    pub grimoire_version: Option<String>, // ESOUI version string at time of install
 }
 
 #[derive(Debug, Deserialize)]
 struct Sidecar {
     addon_id: Option<u32>,
     install_date: Option<i64>,
+    grimoire_version: Option<String>,
 }
 
 fn parse_manifest(path: &Path) -> std::collections::HashMap<String, String> {
@@ -92,13 +94,18 @@ pub fn addon_from_disk(folder: &Path) -> Option<InstalledAddon> {
         depends_on: deps,
         folder_path: folder.to_string_lossy().to_string(),
         install_date: sidecar.as_ref().and_then(|s| s.install_date).unwrap_or(0),
+        grimoire_version: sidecar.as_ref().and_then(|s| s.grimoire_version.clone()),
     })
 }
 
-pub fn write_sidecar(folder: &Path, addon_id: u32, install_date: i64) {
+pub fn write_sidecar(folder: &Path, addon_id: u32, install_date: i64, version: &str) {
     let _ = std::fs::write(
         folder.join(SIDECAR),
-        serde_json::json!({"addon_id": addon_id, "install_date": install_date}).to_string(),
+        serde_json::json!({
+            "addon_id": addon_id,
+            "install_date": install_date,
+            "grimoire_version": version,
+        }).to_string(),
     );
 }
 

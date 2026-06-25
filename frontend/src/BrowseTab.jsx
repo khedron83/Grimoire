@@ -153,7 +153,9 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
   }
 
   const inst = detail ? installStatus(detail) : null;
-  const hasUpdate = inst && detail?.date && inst.install_date && detail.date > inst.install_date;
+  const hasUpdate = inst && (inst.grimoire_version
+    ? inst.grimoire_version !== detail?.version
+    : (inst.install_date && detail?.date && detail.date > inst.install_date));
 
   return (
     <div className="split">
@@ -195,7 +197,9 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
             <tbody>
               {displayed.map(addon => {
                 const inst2 = installStatus(addon);
-                const upd = inst2 && addon.date && inst2.install_date && addon.date > inst2.install_date;
+                const upd = inst2 && (inst2.grimoire_version
+                  ? inst2.grimoire_version !== addon.version
+                  : (inst2.install_date && addon.date && addon.date > inst2.install_date));
                 return (
                   <tr key={addon.addon_id}
                     className={selected === addon.addon_id ? "selected" : ""}

@@ -46,10 +46,11 @@ pub async fn install_addon(
     for folder_name in folders {
         let folder = addons_dir.join(&folder_name);
         if folder.is_dir() {
-            write_sidecar(&folder, info.addon_id, info.date);
+            write_sidecar(&folder, info.addon_id, info.date, &info.version);
             if let Some(mut addon) = addon_from_disk(&folder) {
                 addon.addon_id = Some(info.addon_id);
                 addon.install_date = info.date;
+                addon.grimoire_version = Some(info.version.clone());
                 installed.push(addon);
             }
         }
