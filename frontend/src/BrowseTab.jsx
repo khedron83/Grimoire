@@ -13,10 +13,8 @@ const COLS = [
 
 function buildRemoteMap(allAddons) {
   const m = {};
-  for (const a of allAddons) {
-    for (const dir of a.dirs ?? []) m[dir] = a;
-    m[a.name] = a;
-  }
+  for (const a of allAddons) for (const dir of a.dirs ?? []) m[dir] = a;
+  for (const a of allAddons) m[a.name] = a;
   return m;
 }
 

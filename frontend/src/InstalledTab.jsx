@@ -26,10 +26,10 @@ function hasUpdate(addon, remote) {
 
 function buildRemoteMap(allAddons) {
   const m = {};
-  for (const a of allAddons) {
-    for (const dir of a.dirs ?? []) m[dir] = a;
-    m[a.name] = a;
-  }
+  // dirs first (lower priority — some addons bundle other libs and list them in dirs)
+  for (const a of allAddons) for (const dir of a.dirs ?? []) m[dir] = a;
+  // name second (overwrites dir collisions — exact ESOUI listing name wins)
+  for (const a of allAddons) m[a.name] = a;
   return m;
 }
 
