@@ -75,7 +75,7 @@ export default function InstalledTab({ config, allAddons, installedMap, setInsta
       const av = a[sort.key] ?? "", bv = b[sort.key] ?? "";
       return sort.dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     });
-  }, [addons, remoteMap, sort]);
+  }, [addons, remoteMap, sort, filter]);
 
   function toggleSort(key) {
     setSort(s => s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" });

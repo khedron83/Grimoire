@@ -33,7 +33,7 @@ export default function BrowseTab({ config, allAddons, setAllAddons, installedMa
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
   const [catFilter, setCatFilter] = useState("");
-  const [sort, setSort] = useState({ key: "date", dir: "desc" });
+  const [sort, setSort] = useState({ key: "downloads_total", dir: "desc" });
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState(null);
   const [installing, setInstalling] = useState(false);
