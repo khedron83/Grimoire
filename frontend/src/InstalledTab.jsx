@@ -33,7 +33,7 @@ function buildRemoteMap(allAddons) {
   return m;
 }
 
-export default function InstalledTab({ config, allAddons, installedMap, setInstalledMap, setStatus }) {
+export default function InstalledTab({ config, allAddons, active, installedMap, setInstalledMap, setStatus }) {
   const [addons, setAddons] = useState([]);
   const [sort, setSort] = useState({ key: "_status", dir: "asc" });
   const [selected, setSelected] = useState(new Set());
@@ -61,6 +61,7 @@ export default function InstalledTab({ config, allAddons, installedMap, setInsta
   }
 
   useEffect(() => { if (config.addons_dir) refresh(); }, [config.addons_dir]);
+  useEffect(() => { if (active && config.addons_dir) refresh(); }, [active]);
 
   const displayed = React.useMemo(() => {
     const q = filter.toLowerCase();

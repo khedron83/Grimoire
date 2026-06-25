@@ -67,7 +67,7 @@ export default function App() {
 
       <div className="tab-content">
         <div style={{ display: tab === "installed" ? "contents" : "none" }}>
-          <InstalledTab config={config} allAddons={allAddons}
+          <InstalledTab config={config} allAddons={allAddons} active={tab === "installed"}
             installedMap={installedMap} setInstalledMap={setInstalledMap}
             setStatus={setStatus} />
         </div>
