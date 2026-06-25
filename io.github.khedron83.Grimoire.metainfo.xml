@@ -23,6 +23,8 @@
 
   <launchable type="desktop-id">io.github.khedron83.Grimoire.desktop</launchable>
 
+  <developer_name>khedron83</developer_name>
+
   <url type="homepage">https://github.com/khedron83/Grimoire</url>
   <url type="bugtracker">https://github.com/khedron83/Grimoire/issues</url>
 
@@ -31,7 +33,7 @@
   </provides>
 
   <releases>
-    <release version="1.0" date="2025-01-01">
+    <release version="1.0.0" date="2026-06-25">
       <description>
         <p>Initial release.</p>
       </description>
