@@ -21,6 +21,9 @@ html, body, #root { height: 100%; font-family: system-ui, sans-serif; background
 
 /* Layout */
 .app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.update-banner { display: flex; align-items: center; gap: 8px; background: #4a3a6a; border-bottom: 1px solid #7b5ea7; padding: 6px 12px; font-size: 13px; }
+.update-banner button { background: var(--accent); border: none; color: #fff; padding: 2px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.update-banner button:last-child { background: transparent; color: var(--text-dim); padding: 2px 6px; }
 .tabs-bar { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 8px; }
 .tab-btn { padding: 10px 20px; background: none; border: none; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; font-size: 13px; }
 .tab-btn:hover { color: var(--text); }

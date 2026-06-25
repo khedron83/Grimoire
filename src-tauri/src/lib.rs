@@ -158,6 +158,42 @@ fn cmd_open_folder(path: String) -> Result<(), String> {
     Ok(())
 }
 
+// ── Update check ─────────────────────────────────────────────────────────────
+
+#[tauri::command]
+async fn cmd_check_update(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    let client = reqwest::Client::new();
+    let Ok(resp) = client
+        .get("https://api.github.com/repos/khedron83/Grimoire/releases/latest")
+        .header("User-Agent", "Grimoire")
+        .send().await else { return Ok(None) };
+    let Ok(json) = resp.json::<serde_json::Value>().await else { return Ok(None) };
+    let tag = json["tag_name"].as_str().unwrap_or("");
+    let latest = tag.trim_start_matches('v');
+    let current = app.package_info().version.to_string();
+    if !latest.is_empty() && semver_gt(latest, &current) {
+        Ok(Some(tag.to_string()))
+    } else {
+        Ok(None)
+    }
+}
+
+fn semver_gt(a: &str, b: &str) -> bool {
+    let parse = |s: &str| s.splitn(3, '.').map(|p| p.parse::<u32>().unwrap_or(0)).collect::<Vec<_>>();
+    parse(a) > parse(b)
+}
+
+#[tauri::command]
+fn cmd_open_url(url: String) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    std::process::Command::new("cmd").args(["/C", "start", "", &url]).spawn().map_err(|e| e.to_string())?;
+    #[cfg(target_os = "linux")]
+    std::process::Command::new("xdg-open").arg(&url).spawn().map_err(|e| e.to_string())?;
+    #[cfg(target_os = "macos")]
+    std::process::Command::new("open").arg(&url).spawn().map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 // ── Dialog helper ─────────────────────────────────────────────────────────────
 
 #[tauri::command]
@@ -191,6 +227,8 @@ pub fn run() {
             cmd_delete_backup,
             cmd_open_folder,
             cmd_pick_folder,
+            cmd_check_update,
+            cmd_open_url,
         ])
         .run(tauri::generate_context!())
         .expect("error running grimoire");
