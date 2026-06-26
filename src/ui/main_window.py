@@ -16,7 +16,7 @@ from .browse_tab import BrowseTab
 from .installed_tab import InstalledTab
 from .backup_tab import BackupTab
 from .settings_dialog import SettingsDialog
-from .workers import UpdateCheckWorker
+from .workers import UpdateCheckWorker, APP_VERSION
 
 
 class MainWindow(QMainWindow):
@@ -165,7 +165,7 @@ class MainWindow(QMainWindow):
         dlg.setWindowTitle("About Grimoire")
         dlg.setTextFormat(Qt.TextFormat.RichText)
         dlg.setText(
-            "<b>Grimoire</b> v1.0<br><br>"
+            f"<b>Grimoire</b> v{APP_VERSION}<br><br>"
             "An addon manager for The Elder Scrolls Online.<br>"
             "Browse, install, and update addons from ESOUI.com<br>"
             "with automatic dependency resolution.<br><br>"
