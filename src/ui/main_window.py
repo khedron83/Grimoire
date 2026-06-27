@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         # Update banner (hidden until an update is found)
         self._update_banner = QWidget()
         self._update_banner.setStyleSheet(
-            "background:#6a4fc8; color:white; padding:4px 8px;"
+            "background: palette(highlight); color: palette(highlightedText); padding:4px 8px;"
         )
         banner_layout = QHBoxLayout(self._update_banner)
         banner_layout.setContentsMargins(8, 4, 8, 4)

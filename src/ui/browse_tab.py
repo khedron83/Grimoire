@@ -164,7 +164,7 @@ class BrowseTab(QWidget):
 
         self._detail_meta = QLabel()
         self._detail_meta.setWordWrap(True)
-        self._detail_meta.setStyleSheet("color: #aaa; font-size: 11px;")
+        self._detail_meta.setStyleSheet("color: palette(placeholderText); font-size: 11px;")
 
         self._detail_desc = QTextBrowser()
 
