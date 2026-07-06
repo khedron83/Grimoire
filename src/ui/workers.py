@@ -12,7 +12,7 @@ APP_VERSION = "1.0.2"
 
 from ..core.addon import Addon, scan_addons_dir
 from ..core.esoui import RemoteAddonInfo
-from ..core.installer import install_addon, remove_addon, update_addon
+from ..core.installer import install_addon, remove_addon, update_addon, find_bundled_lib_warnings
 from ..core.backup import create_backup, restore_backup
 from ..core.dependency import resolve_install_set, DependencyError
 
@@ -82,6 +82,8 @@ class InstallWorker(QThread):
                 all_installed.extend(batch)
                 for a in batch:
                     live_installed[a.name] = a
+                    for w in find_bundled_lib_warnings(a.folder_path, self.addons_dir):
+                        self.progress.emit(f"Warning: {w}")
 
                 # Queue any missing dependencies from the freshly installed manifests
                 for addon in batch:
@@ -122,6 +124,9 @@ class UpdateWorker(QThread):
                     + (f" / {total // 1024}KB" if total else "")
                 ),
             )
+            for a in updated:
+                for w in find_bundled_lib_warnings(a.folder_path, self.addons_dir):
+                    self.progress.emit(f"Warning: {w}")
             self.finished.emit(updated)
         except Exception as e:
             self.error.emit(str(e))

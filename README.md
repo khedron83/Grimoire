@@ -11,6 +11,7 @@ Works on **Windows**, **Linux**, and **Steam Deck**.
 - **Browse** the full ESOUI addon catalogue (~3,000 addons) with live search, category filter, and sortable columns
 - **Install** addons in one click — dependencies resolved and installed automatically
 - **Update** installed addons — detects newer versions and updates in bulk
+- **Bundled-library conflict warnings** — flags when an addon bundles its own copy of a library (e.g. LibStub) that's also installed standalone, which can cause duplicate-library conflicts
 - **Remove** addons cleanly from the AddOns directory
 - **Backup & restore** your AddOns folder and optionally your SavedVariables (character data, settings)
 - **Auto-detect** your AddOns directory on first launch (Windows, Linux, Steam Deck / Proton paths all covered)

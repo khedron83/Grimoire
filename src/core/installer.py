@@ -70,6 +70,23 @@ def install_addon(
     return addons
 
 
+def find_bundled_lib_warnings(folder: Path, addons_dir: Path) -> list[str]:
+    """Warn when an addon bundles its own copy of a library also installed standalone."""
+    warnings = []
+    for libs_dir in folder.glob("*"):
+        if not (libs_dir.is_dir() and libs_dir.name.lower() in ("libs", "lib")):
+            continue
+        for lib in libs_dir.iterdir():
+            standalone = addons_dir / lib.name
+            if lib.is_dir() and standalone.is_dir() and standalone != folder:
+                warnings.append(
+                    f"{folder.name} bundles its own copy of '{lib.name}' "
+                    f"({libs_dir.name}/{lib.name}), which is also installed standalone — "
+                    f"may cause duplicate-library conflicts."
+                )
+    return warnings
+
+
 def remove_addon(addon: Addon) -> None:
     if addon.folder_path and addon.folder_path.exists():
         shutil.rmtree(addon.folder_path)
@@ -83,3 +100,22 @@ def update_addon(
 ) -> list[Addon]:
     remove_addon(addon)
     return install_addon(info, addons_dir, progress_cb)
+
+
+def _demo():
+    with tempfile.TemporaryDirectory() as tmp:
+        addons_dir = Path(tmp)
+        my_addon = addons_dir / "MyAddon"
+        (my_addon / "Libs" / "LibStub").mkdir(parents=True)
+        (my_addon / "Libs" / "LibOnlyBundled").mkdir(parents=True)
+        (addons_dir / "LibStub").mkdir()
+
+        warnings = find_bundled_lib_warnings(my_addon, addons_dir)
+        assert len(warnings) == 1, warnings
+        assert "LibStub" in warnings[0]
+        assert "LibOnlyBundled" not in " ".join(warnings)
+    print("ok")
+
+
+if __name__ == "__main__":
+    _demo()
